@@ -1,8 +1,19 @@
+"use client";
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Stethoscope, User, Bell, Search, MessageSquare, MapPin, Activity } from 'lucide-react';
+import { Stethoscope, User, Bell, Search, MessageSquare, MapPin, Activity, LogOut } from 'lucide-react';
+import { useUser, useAuth } from '@/firebase';
+import { signOut } from 'firebase/auth';
 
 export function Navbar() {
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut(auth);
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4 md:px-8">
@@ -29,18 +40,35 @@ export function Navbar() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="hidden sm:flex">
-            <Bell className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center gap-2">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-medium leading-none">John Doe</p>
-              <p className="text-xs text-muted-foreground mt-1">Patient</p>
-            </div>
-            <Button variant="outline" size="icon" className="rounded-full border-2 border-primary">
-              <User className="h-5 w-5" />
-            </Button>
-          </div>
+          {!isUserLoading && (
+            <>
+              {user ? (
+                <div className="flex items-center gap-4">
+                  <Button variant="ghost" size="icon" className="hidden sm:flex">
+                    <Bell className="h-5 w-5" />
+                  </Button>
+                  <div className="flex items-center gap-2">
+                    <div className="text-right hidden sm:block">
+                      <p className="text-sm font-medium leading-none">{user.email?.split('@')[0] || 'User'}</p>
+                      <p className="text-xs text-muted-foreground mt-1">Patient</p>
+                    </div>
+                    <Button variant="outline" size="icon" className="rounded-full border-2 border-primary" onClick={handleSignOut}>
+                      <LogOut className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Button asChild variant="ghost" size="sm" className="hidden sm:flex">
+                    <Link href="/login">Login</Link>
+                  </Button>
+                  <Button asChild size="sm" className="bg-primary hover:bg-primary/90">
+                    <Link href="/signup">Sign Up</Link>
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </header>
