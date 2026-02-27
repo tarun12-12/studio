@@ -194,6 +194,13 @@ export default function HospitalsPage() {
         <DialogContent className="max-w-2xl overflow-hidden p-0 border-none shadow-2xl rounded-3xl">
           {selectedHospital && (
             <div className="flex flex-col">
+              <DialogHeader className="sr-only">
+                <DialogTitle>{selectedHospital.name}</DialogTitle>
+                <DialogDescription>
+                  Detailed information about {selectedHospital.name} including doctors and contact info.
+                </DialogDescription>
+              </DialogHeader>
+
               <div className="relative h-64 w-full">
                 {hospitalImage && (
                   <Image 
