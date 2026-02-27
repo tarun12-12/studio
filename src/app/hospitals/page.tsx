@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { MapPin, Phone, Globe, Mail, User, Search, Navigation, Info, Clock, Stethoscope } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { MapPin, Phone, Globe, Mail, User, Search, Navigation, Info, Stethoscope } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
@@ -170,20 +170,13 @@ export default function HospitalsPage() {
             </div>
 
             <div className="lg:col-span-2 rounded-3xl overflow-hidden relative min-h-[500px] bg-slate-200 shadow-inner">
-              <div className="absolute inset-0 bg-slate-200 flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <MapPin className="h-12 w-12 text-primary animate-bounce mx-auto" />
-                  <p className="text-slate-500 font-medium">Map of Coimbatore loading...</p>
-                </div>
-              </div>
-              <div className="absolute top-4 right-4 flex flex-col gap-2">
-                <Button variant="secondary" size="icon" className="shadow-lg bg-white rounded-xl">
-                  <span className="text-lg font-bold text-slate-900">+</span>
-                </Button>
-                <Button variant="secondary" size="icon" className="shadow-lg bg-white rounded-xl">
-                  <span className="text-lg font-bold text-slate-900">-</span>
-                </Button>
-              </div>
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125322.50349603387!2d76.88483287612716!3d11.0120145!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba859af2f971cb5%3A0x2d6c3fdd9364828!2sCoimbatore%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1715682456789!5m2!1sen!2sin" 
+                className="absolute inset-0 w-full h-full border-0" 
+                allowFullScreen 
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
             </div>
           </div>
         </div>
