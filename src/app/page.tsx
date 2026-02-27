@@ -303,7 +303,7 @@ export default function Home() {
       {/* Floating Chatbot Icon */}
       <Link 
         href="/analyze" 
-        className="fixed bottom-8 right-8 z-50 bg-primary text-white p-4 rounded-full shadow-2xl hover:bg-primary/90 hover:scale-110 transition-all group"
+        className="fixed bottom-8 right-8 z-50 bg-secondary text-white p-4 rounded-full shadow-2xl hover:bg-secondary/90 hover:scale-110 transition-all group"
         title="Chat with AI Medical Assistant"
       >
         <MessageCircle className="h-8 w-8" />
