@@ -5,7 +5,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Activity, Search, MapPin, MessageSquare, ArrowRight, Star, Clock, Stethoscope, Building2 } from 'lucide-react';
+import { Activity, Search, MapPin, MessageSquare, ArrowRight, Star, Clock, Stethoscope, Building2, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -57,7 +57,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col relative">
       <Navbar />
       <main className="flex-1">
         {/* Hero Section */}
@@ -299,6 +299,19 @@ export default function Home() {
           </div>
         </section>
       </main>
+
+      {/* Floating Chatbot Icon */}
+      <Link 
+        href="/analyze" 
+        className="fixed bottom-8 right-8 z-50 bg-primary text-white p-4 rounded-full shadow-2xl hover:bg-primary/90 hover:scale-110 transition-all group"
+        title="Chat with AI Medical Assistant"
+      >
+        <MessageCircle className="h-8 w-8" />
+        <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-slate-900 text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+          Analyze Symptoms with AI
+        </span>
+      </Link>
+
       <footer className="border-t bg-slate-50 py-12">
         <div className="container px-4 md:px-8 mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
