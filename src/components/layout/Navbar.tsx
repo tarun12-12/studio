@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Stethoscope, User, Bell, Search, MessageSquare, MapPin, Activity, LogOut } from 'lucide-react';
+import { Stethoscope, User, Bell, Search, MessageSquare, MapPin, Activity, LogOut, Home } from 'lucide-react';
 import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 
@@ -25,6 +25,9 @@ export function Navbar() {
             <span className="font-headline text-xl font-bold text-primary hidden sm:inline-block">HealthConnect AI</span>
           </Link>
           <nav className="ml-8 hidden md:flex items-center space-x-6 text-sm font-medium">
+            <Link href="/" className="transition-colors hover:text-primary flex items-center gap-1.5">
+              <Home className="h-4 w-4" /> Home
+            </Link>
             <Link href="/analyze" className="transition-colors hover:text-primary flex items-center gap-1.5">
               <Activity className="h-4 w-4" /> Analyze
             </Link>
