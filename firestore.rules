@@ -1,0 +1,142 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * HealthConnect AI Security Rules
+     *
+     * Core Philosophy:
+     * This ruleset implements a dual-layered security model. Patient-specific data (profiles and symptom 
+     * analyses) follows a strict User-Ownership model based on the Firebase Authentication UID. 
+     * Collaborative data (conversations and messages) utilizes a Shared-Access model where access is 
+     * granted if the user's UID matches either the 'patientId' or 'doctorId' stored directly on 
+     * the documents. Public metadata (hospitals and doctors) is globally readable.
+     *
+     * Data Structure:
+     * - /patients/{patientId}: Private patient profiles (patientId == auth.uid).
+     * - /patients/{patientId}/symptomAnalyses/{id}: Private AI analysis results.
+     * - /hospitals/{id} & /doctors/{id}: Publicly searchable registries.
+     * - /conversations/{id}: Messaging threads shared between specific patients and doctors.
+     * - /conversations/{id}/messages/{id}: Individual messages within a shared thread.
+     *
+     * Key Security Decisions:
+     * - Denormalization for Authorization: 'patientId' and 'doctorId' are copied into 
+     *   Conversation and Message documents. This allows rules to perform fast, atomic 
+     *   checks without costly get() calls to parent documents or profile collections.
+     * - Immutable Identity: Critical relational fields like 'patientId' or 'id' are 
+     *   enforced as immutable during updates to prevent ownership hijacking.
+     * - Resource Existence: All update and delete operations require an explicit 
+     *   check to ensure the document exists before evaluation.
+     */
+
+    // --- Helper Functions ---
+
+    /** Checks if the request is from an authenticated user. */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** Checks if the authenticated user's UID matches the provided userId. */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /** Checks if the user is the owner and the document exists (for updates/deletes). */
+    function isExistingOwner(userId) {
+      return resource != null && isOwner(userId);
+    }
+
+    /** 
+     * Checks if the authenticated user is a participant in a conversation or message 
+     * based on denormalized patientId and doctorId fields.
+     */
+    function isParticipant(data) {
+      return isSignedIn() && (request.auth.uid == data.patientId || request.auth.uid == data.doctorId);
+    }
+
+    // --- Collection Rules ---
+
+    /**
+     * @description Rules for patient profiles. Users can only manage their own profile.
+     * @path /patients/{patientId}
+     * @allow (create) if auth.uid == 'user_123' and request.resource.data.id == 'user_123'
+     * @deny (get) if auth.uid != patientId
+     * @principle Enforces path-based ownership and validates relational integrity of the ID field.
+     */
+    match /patients/{patientId} {
+      allow get, list: if isOwner(patientId);
+      allow create: if isOwner(patientId) && request.resource.data.id == patientId;
+      allow update: if isExistingOwner(patientId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(patientId);
+
+      /**
+       * @description Rules for symptom analyses. Only the parent patient can access these records.
+       * @path /patients/{patientId}/symptomAnalyses/{analysisId}
+       * @allow (list) if auth.uid == patientId
+       * @deny (create) if request.resource.data.patientId != patientId
+       * @principle Uses path-based authorization to secure private subcollections.
+       */
+      match /symptomAnalyses/{analysisId} {
+        allow get, list: if isOwner(patientId);
+        allow create: if isOwner(patientId) && request.resource.data.patientId == patientId;
+        allow update: if isExistingOwner(patientId) && request.resource.data.patientId == resource.data.patientId;
+        allow delete: if isExistingOwner(patientId);
+      }
+    }
+
+    /**
+     * @description Publicly readable hospital directory.
+     * @path /hospitals/{hospitalId}
+     * @allow (get, list) if true (public access)
+     * @deny (write) for all users (managed via admin/system)
+     * @principle Provides global read access for discovery; restricts modifications to system level.
+     */
+    match /hospitals/{hospitalId} {
+      allow get, list: if true;
+      allow create, update, delete: if false; 
+      // CRITICAL: Schema lacks ownership fields (e.g., adminId) for hospitals. 
+      // TODO: Add owner validation once the schema is updated with an ownership field if self-service is required.
+    }
+
+    /**
+     * @description Publicly readable doctor directory.
+     * @path /doctors/{doctorId}
+     * @allow (get, list) if true (public access)
+     * @deny (write) for all users (managed via admin/system)
+     * @principle Provides global read access for patient discovery.
+     */
+    match /doctors/{doctorId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+      // CRITICAL: Schema lacks ownership fields linking to auth.uid for doctors.
+      // TODO: Add owner validation once the schema is updated with an ownership field if self-service is required.
+    }
+
+    /**
+     * @description Secure messaging threads shared between a patient and a doctor.
+     * @path /conversations/{conversationId}
+     * @allow (get) if auth.uid matches data.patientId or data.doctorId
+     * @deny (create) if auth.uid is not one of the participants in the data
+     * @principle Implements Shared Access (Closed Collaborators) using denormalized UID fields.
+     */
+    match /conversations/{conversationId} {
+      allow get, list: if isParticipant(resource.data);
+      allow create: if isParticipant(request.resource.data);
+      allow update: if isParticipant(resource.data) && request.resource.data.patientId == resource.data.patientId && request.resource.data.doctorId == resource.data.doctorId;
+      allow delete: if false; // Conversations are typically retained for medical records.
+
+      /**
+       * @description Individual messages within a conversation.
+       * @path /conversations/{conversationId}/messages/{messageId}
+       * @allow (list) if auth.uid is participant in the message data
+       * @deny (update) as messages are immutable in this context
+       * @principle Authorization Independence: Access is determined by fields on the message itself.
+       */
+      match /messages/{messageId} {
+        allow get, list: if isParticipant(resource.data);
+        allow create: if isParticipant(request.resource.data) && request.resource.data.conversationId == conversationId;
+        allow update, delete: if false; // Messages are immutable to ensure integrity of communication history.
+      }
+    }
+  }
+}
