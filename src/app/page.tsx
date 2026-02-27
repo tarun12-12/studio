@@ -16,6 +16,7 @@ export default function Home() {
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-medical');
   const kmchImage = PlaceHolderImages.find(img => img.id === 'hospital-kmch');
   const psgImage = PlaceHolderImages.find(img => img.id === 'hospital-psg');
+  const kgImage = PlaceHolderImages.find(img => img.id === 'hospital-kg');
 
   const coimbatoreHospitals = [
     {
@@ -23,14 +24,24 @@ export default function Home() {
       name: 'KMCH Hospital',
       location: 'Avinashi Road',
       rating: 4.8,
-      image: kmchImage?.imageUrl
+      image: kmchImage?.imageUrl,
+      imageHint: kmchImage?.imageHint
     },
     {
       id: 'psg',
       name: 'PSG Hospitals',
       location: 'Peelamedu',
       rating: 4.7,
-      image: psgImage?.imageUrl
+      image: psgImage?.imageUrl,
+      imageHint: psgImage?.imageHint
+    },
+    {
+      id: 'kg',
+      name: 'KG Hospital',
+      location: 'Arts College Road',
+      rating: 4.6,
+      image: kgImage?.imageUrl,
+      imageHint: kgImage?.imageHint
     }
   ];
 
@@ -104,7 +115,7 @@ export default function Home() {
                         alt={hospital.name} 
                         fill 
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        data-ai-hint="hospital building"
+                        data-ai-hint={hospital.imageHint || "hospital building"}
                       />
                     )}
                   </div>

@@ -30,6 +30,12 @@
       "description": "KG Hospital Coimbatore",
       "imageUrl": "https://picsum.photos/seed/kgh/800/400",
       "imageHint": "hospital building"
+    },
+    {
+      "id": "hospital-ramakrishna",
+      "description": "Sri Ramakrishna Hospital Coimbatore",
+      "imageUrl": "https://picsum.photos/seed/srk/800/400",
+      "imageHint": "hospital complex"
     }
   ]
 }

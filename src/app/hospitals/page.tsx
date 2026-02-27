@@ -8,10 +8,12 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Phone, Globe, Clock, Navigation, Search } from 'lucide-react';
 import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
-const hospitals = [
+const hospitalsData = [
   {
     id: 1,
+    placeholderId: 'hospital-kmch',
     name: "KMCH (Kovai Medical Center and Hospital)",
     address: "Avinashi Road, Coimbatore, Tamil Nadu 641014",
     phone: "+91 422 432 3800",
@@ -22,6 +24,7 @@ const hospitals = [
   },
   {
     id: 2,
+    placeholderId: 'hospital-psg',
     name: "PSG Hospitals",
     address: "Avinashi Rd, Peelamedu, Coimbatore, Tamil Nadu 641004",
     phone: "+91 422 257 0170",
@@ -32,6 +35,7 @@ const hospitals = [
   },
   {
     id: 3,
+    placeholderId: 'hospital-kg',
     name: "KG Hospital",
     address: "Arts College Rd, Coimbatore, Tamil Nadu 641018",
     phone: "+91 422 221 2121",
@@ -42,8 +46,9 @@ const hospitals = [
   },
   {
     id: 4,
+    placeholderId: 'hospital-ramakrishna',
     name: "Sri Ramakrishna Hospital",
-    address: "Saroini Naidu Rd, Sidhapudur, Coimbatore, Tamil Nadu 641044",
+    address: "Sarojini Naidu Rd, Sidhapudur, Coimbatore, Tamil Nadu 641044",
     phone: "+91 422 450 0000",
     website: "sriramakrishnahospital.com",
     status: "Open 24/7",
@@ -74,39 +79,55 @@ export default function HospitalsPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1 space-y-4 max-h-[700px] overflow-y-auto pr-2">
-              {hospitals.map((hosp) => (
-                <Card key={hosp.id} className="hover:border-primary transition-colors cursor-pointer border-transparent shadow-sm">
-                  <CardHeader className="p-5">
-                    <div className="flex justify-between items-start mb-2">
-                      <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-none px-2 py-0 text-[10px] uppercase tracking-wider font-bold">
-                        {hosp.status}
-                      </Badge>
-                      <span className="text-xs font-medium text-slate-400">{hosp.distance}</span>
-                    </div>
-                    <CardTitle className="text-lg font-bold">{hosp.name}</CardTitle>
-                    <CardDescription className="flex items-center gap-1.5 text-sm mt-1">
-                      <MapPin className="h-3 w-3" /> {hosp.address}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="px-5 pb-5 pt-0 space-y-4">
-                    <div className="flex flex-wrap gap-1.5">
-                      {hosp.specialties.map((spec) => (
-                        <Badge key={spec} variant="secondary" className="text-[10px] font-medium px-2 py-0.5">
-                          {spec}
+              {hospitalsData.map((hosp) => {
+                const hospitalImage = PlaceHolderImages.find(img => img.id === hosp.placeholderId);
+                return (
+                  <Card key={hosp.id} className="hover:border-primary transition-colors cursor-pointer border-transparent shadow-sm overflow-hidden group">
+                    <div className="relative h-40 w-full overflow-hidden">
+                      {hospitalImage && (
+                        <Image
+                          src={hospitalImage.imageUrl}
+                          alt={hosp.name}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-110"
+                          data-ai-hint={hospitalImage.imageHint}
+                        />
+                      )}
+                      <div className="absolute top-2 left-2">
+                        <Badge className="bg-green-500 text-white border-none px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold">
+                          {hosp.status}
                         </Badge>
-                      ))}
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="flex-1 text-xs h-8">
-                        <Phone className="h-3 w-3 mr-1.5" /> Call
-                      </Button>
-                      <Button variant="outline" size="sm" className="flex-1 text-xs h-8">
-                        <Navigation className="h-3 w-3 mr-1.5" /> Directions
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    <CardHeader className="p-5">
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="text-xs font-medium text-slate-400">{hosp.distance}</span>
+                      </div>
+                      <CardTitle className="text-lg font-bold group-hover:text-primary transition-colors">{hosp.name}</CardTitle>
+                      <CardDescription className="flex items-center gap-1.5 text-sm mt-1">
+                        <MapPin className="h-3 w-3 shrink-0" /> {hosp.address}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="px-5 pb-5 pt-0 space-y-4">
+                      <div className="flex flex-wrap gap-1.5">
+                        {hosp.specialties.map((spec) => (
+                          <Badge key={spec} variant="secondary" className="text-[10px] font-medium px-2 py-0.5">
+                            {spec}
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm" className="flex-1 text-xs h-8">
+                          <Phone className="h-3 w-3 mr-1.5" /> Call
+                        </Button>
+                        <Button variant="outline" size="sm" className="flex-1 text-xs h-8">
+                          <Navigation className="h-3 w-3 mr-1.5" /> Directions
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
 
             <div className="lg:col-span-2 rounded-3xl overflow-hidden relative min-h-[500px] bg-slate-200 shadow-inner">
