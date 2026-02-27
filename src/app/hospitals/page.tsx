@@ -1,12 +1,14 @@
 
 "use client";
 
+import { useState } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Phone, Globe, Clock, Navigation, Search } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { MapPin, Phone, Globe, Mail, User, Search, Navigation, Info, Clock, Stethoscope } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
@@ -17,10 +19,16 @@ const hospitalsData = [
     name: "KMCH (Kovai Medical Center and Hospital)",
     address: "Avinashi Road, Coimbatore, Tamil Nadu 641014",
     phone: "+91 422 432 3800",
+    email: "info@kmchhospitals.com",
     website: "kmchhospitals.com",
     status: "Open 24/7",
     distance: "Peelamedu",
-    specialties: ["Cardiology", "Oncology", "Multi-Speciality"]
+    specialties: ["Cardiology", "Oncology", "Multi-Speciality"],
+    doctors: [
+      { name: "Dr. Nalla G Palaniswami", role: "Chairman & Medical Director" },
+      { name: "Dr. Thavamani D Palaniswami", role: "Vice Chairman" },
+      { name: "Dr. S. Karthikeyan", role: "Chief of Medical Services" }
+    ]
   },
   {
     id: 2,
@@ -28,10 +36,15 @@ const hospitalsData = [
     name: "PSG Hospitals",
     address: "Avinashi Rd, Peelamedu, Coimbatore, Tamil Nadu 641004",
     phone: "+91 422 257 0170",
+    email: "contact@psghospitals.com",
     website: "psghospitals.com",
     status: "Open 24/7",
     distance: "Peelamedu",
-    specialties: ["Education", "Emergency", "Neurology"]
+    specialties: ["Education", "Emergency", "Neurology"],
+    doctors: [
+      { name: "Dr. J.S. Bhuvaneswaran", role: "Director, PSG Super Speciality Hospital" },
+      { name: "Dr. T.M. SubbaRao", role: "Principal, PSG IMSR" }
+    ]
   },
   {
     id: 3,
@@ -39,10 +52,15 @@ const hospitalsData = [
     name: "KG Hospital",
     address: "Arts College Rd, Coimbatore, Tamil Nadu 641018",
     phone: "+91 422 221 2121",
+    email: "kg@kghospital.com",
     website: "kghospital.com",
     status: "Open 24/7",
     distance: "Gopalapuram",
-    specialties: ["Heart", "Diabetes", "Eye Care"]
+    specialties: ["Heart", "Diabetes", "Eye Care"],
+    doctors: [
+      { name: "Dr. G. Bakthavathsalam", role: "Chairman & Managing Director" },
+      { name: "Dr. Ashok Bakthavathsalam", role: "Medical Director" }
+    ]
   },
   {
     id: 4,
@@ -50,14 +68,31 @@ const hospitalsData = [
     name: "Sri Ramakrishna Hospital",
     address: "Sarojini Naidu Rd, Sidhapudur, Coimbatore, Tamil Nadu 641044",
     phone: "+91 422 450 0000",
+    email: "info@sriramakrishnahospital.com",
     website: "sriramakrishnahospital.com",
     status: "Open 24/7",
     distance: "Sidhapudur",
-    specialties: ["Organ Transplant", "Maternity", "Critical Care"]
+    specialties: ["Organ Transplant", "Maternity", "Critical Care"],
+    doctors: [
+      { name: "Dr. P. Guhan", role: "Director & Chief Medical Oncologist" },
+      { name: "Dr. Isaac S.W. Christian", role: "Medical Director" }
+    ]
   }
 ];
 
 export default function HospitalsPage() {
+  const [selectedHospital, setSelectedHospital] = useState<typeof hospitalsData[0] | null>(null);
+
+  const handleHospitalClick = (hospital: typeof hospitalsData[0]) => {
+    setSelectedHospital(hospital);
+  };
+
+  const closeDialog = () => {
+    setSelectedHospital(null);
+  };
+
+  const hospitalImage = selectedHospital ? PlaceHolderImages.find(img => img.id === selectedHospital.placeholderId) : null;
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <Navbar />
@@ -80,17 +115,21 @@ export default function HospitalsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1 space-y-4 max-h-[700px] overflow-y-auto pr-2">
               {hospitalsData.map((hosp) => {
-                const hospitalImage = PlaceHolderImages.find(img => img.id === hosp.placeholderId);
+                const img = PlaceHolderImages.find(i => i.id === hosp.placeholderId);
                 return (
-                  <Card key={hosp.id} className="hover:border-primary transition-colors cursor-pointer border-transparent shadow-sm overflow-hidden group">
+                  <Card 
+                    key={hosp.id} 
+                    className="hover:border-primary transition-all cursor-pointer border-transparent shadow-sm overflow-hidden group hover:shadow-md"
+                    onClick={() => handleHospitalClick(hosp)}
+                  >
                     <div className="relative h-40 w-full overflow-hidden">
-                      {hospitalImage && (
+                      {img && (
                         <Image
-                          src={hospitalImage.imageUrl}
+                          src={img.imageUrl}
                           alt={hosp.name}
                           fill
                           className="object-cover transition-transform duration-500 group-hover:scale-110"
-                          data-ai-hint={hospitalImage.imageHint}
+                          data-ai-hint={img.imageHint}
                         />
                       )}
                       <div className="absolute top-2 left-2">
@@ -104,8 +143,8 @@ export default function HospitalsPage() {
                         <span className="text-xs font-medium text-slate-400">{hosp.distance}</span>
                       </div>
                       <CardTitle className="text-lg font-bold group-hover:text-primary transition-colors">{hosp.name}</CardTitle>
-                      <CardDescription className="flex items-center gap-1.5 text-sm mt-1">
-                        <MapPin className="h-3 w-3 shrink-0" /> {hosp.address}
+                      <CardDescription className="flex items-start gap-1.5 text-sm mt-1">
+                        <MapPin className="h-3 w-3 shrink-0 mt-0.5" /> {hosp.address}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="px-5 pb-5 pt-0 space-y-4">
@@ -149,6 +188,99 @@ export default function HospitalsPage() {
           </div>
         </div>
       </main>
+
+      {/* Hospital Detail Dialog */}
+      <Dialog open={!!selectedHospital} onOpenChange={closeDialog}>
+        <DialogContent className="max-w-2xl overflow-hidden p-0 border-none shadow-2xl rounded-3xl">
+          {selectedHospital && (
+            <div className="flex flex-col">
+              <div className="relative h-64 w-full">
+                {hospitalImage && (
+                  <Image 
+                    src={hospitalImage.imageUrl} 
+                    alt={selectedHospital.name} 
+                    fill 
+                    className="object-cover"
+                    data-ai-hint={hospitalImage.imageHint}
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <Badge className="bg-green-500 text-white mb-2">{selectedHospital.status}</Badge>
+                  <h2 className="text-2xl font-bold text-white font-headline">{selectedHospital.name}</h2>
+                </div>
+              </div>
+
+              <div className="p-8 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-lg flex items-center gap-2">
+                      <Info className="h-5 w-5 text-primary" /> Contact Details
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3 text-sm">
+                        <MapPin className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
+                        <span>{selectedHospital.address}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm">
+                        <Phone className="h-5 w-5 text-slate-400 shrink-0" />
+                        <span className="font-medium">{selectedHospital.phone}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm">
+                        <Mail className="h-5 w-5 text-slate-400 shrink-0" />
+                        <span className="text-primary hover:underline cursor-pointer">{selectedHospital.email}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm">
+                        <Globe className="h-5 w-5 text-slate-400 shrink-0" />
+                        <span className="text-primary hover:underline cursor-pointer">{selectedHospital.website}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-lg flex items-center gap-2">
+                      <Stethoscope className="h-5 w-5 text-primary" /> Specialist Doctors
+                    </h3>
+                    <div className="space-y-3">
+                      {selectedHospital.doctors.map((doc, idx) => (
+                        <div key={idx} className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                            <User className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-slate-900">{doc.name}</p>
+                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{doc.role}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="font-bold text-lg">Specialities</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedHospital.specialties.map((spec) => (
+                      <Badge key={spec} variant="secondary" className="px-3 py-1">
+                        {spec}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 bg-slate-50 border-t flex gap-3">
+                <Button className="flex-1 h-12 rounded-xl bg-primary hover:bg-primary/90">
+                  Book Appointment
+                </Button>
+                <Button variant="outline" className="flex-1 h-12 rounded-xl border-2">
+                  Emergency Contact
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
