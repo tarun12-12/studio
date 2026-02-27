@@ -13,10 +13,13 @@ import { useUser } from '@/firebase';
 
 export default function Home() {
   const { user } = useUser();
+  
+  // Find placeholder images for the hero and specific hospitals
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-medical');
   const kmchImage = PlaceHolderImages.find(img => img.id === 'hospital-kmch');
   const psgImage = PlaceHolderImages.find(img => img.id === 'hospital-psg');
   const kgImage = PlaceHolderImages.find(img => img.id === 'hospital-kg');
+  const ramakrishnaImage = PlaceHolderImages.find(img => img.id === 'hospital-ramakrishna');
 
   const coimbatoreHospitals = [
     {
@@ -42,6 +45,14 @@ export default function Home() {
       rating: 4.6,
       image: kgImage?.imageUrl,
       imageHint: kgImage?.imageHint
+    },
+    {
+      id: 'ramakrishna',
+      name: 'Sri Ramakrishna Hospital',
+      location: 'Sidhapudur',
+      rating: 4.7,
+      image: ramakrishnaImage?.imageUrl,
+      imageHint: ramakrishnaImage?.imageHint
     }
   ];
 
@@ -50,8 +61,8 @@ export default function Home() {
       <Navbar />
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative w-full py-12 md:py-24 lg:py-32 overflow-hidden">
-          <div className="container px-4 md:px-8 relative z-10">
+        <section className="relative w-full py-12 md:py-24 lg:py-32 overflow-hidden bg-white">
+          <div className="container px-4 md:px-8 relative z-10 mx-auto">
             <div className="grid gap-12 lg:grid-cols-2 items-center">
               <div className="flex flex-col justify-center space-y-6">
                 <div className="space-y-2">
@@ -95,7 +106,7 @@ export default function Home() {
 
         {/* Localized Coimbatore Hospitals Section */}
         <section className="py-16 bg-slate-50">
-          <div className="container px-4 md:px-8">
+          <div className="container px-4 md:px-8 mx-auto">
             <div className="flex items-center justify-between mb-8">
               <div className="space-y-1">
                 <h2 className="text-3xl font-bold font-headline">Hospitals in Coimbatore</h2>
@@ -105,10 +116,10 @@ export default function Home() {
                 <Link href="/hospitals">View All <ArrowRight className="ml-2 h-4 w-4" /></Link>
               </Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {coimbatoreHospitals.map((hospital) => (
-                <Card key={hospital.id} className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all group">
-                  <div className="relative h-48 bg-slate-200">
+                <Card key={hospital.id} className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all group h-full flex flex-col">
+                  <div className="relative h-48 bg-slate-200 shrink-0">
                     {hospital.image && (
                       <Image 
                         src={hospital.image} 
@@ -119,45 +130,39 @@ export default function Home() {
                       />
                     )}
                   </div>
-                  <CardContent className="p-6">
+                  <CardContent className="p-6 flex-1">
                     <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-bold text-xl">{hospital.name}</h3>
-                      <div className="flex items-center gap-1 text-sm font-bold text-amber-500">
+                      <h3 className="font-bold text-lg leading-tight">{hospital.name}</h3>
+                      <div className="flex items-center gap-1 text-sm font-bold text-amber-500 shrink-0">
                         <Star className="h-4 w-4 fill-amber-500" /> {hospital.rating}
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
-                      <MapPin className="h-4 w-4" /> {hospital.location}, Coimbatore
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
+                      <MapPin className="h-3 w-3" /> {hospital.location}, Coimbatore
                     </div>
+                  </CardContent>
+                  <CardFooter className="px-6 pb-6 pt-0">
                     <Button asChild className="w-full bg-slate-100 text-slate-900 hover:bg-primary hover:text-white border-none shadow-none">
                       <Link href="/hospitals">Locate Hospital</Link>
                     </Button>
-                  </CardContent>
+                  </CardFooter>
                 </Card>
               ))}
-              <Card className="flex flex-col items-center justify-center p-8 border-dashed border-2 bg-transparent hover:bg-slate-100/50 transition-colors">
-                <Building2 className="h-12 w-12 text-slate-300 mb-4" />
-                <h3 className="font-bold text-lg mb-2">More Facilities</h3>
-                <p className="text-sm text-muted-foreground text-center mb-6">Explore the full list of medical centers in Coimbatore.</p>
-                <Button asChild variant="outline" className="rounded-full border-primary text-primary">
-                  <Link href="/hospitals">Explore All</Link>
-                </Button>
-              </Card>
             </div>
           </div>
         </section>
 
         {/* Quick Actions Dashboard */}
         <section className="py-12 bg-white border-y">
-          <div className="container px-4 md:px-8">
-            <div className="mb-10 flex items-center justify-between">
+          <div className="container px-4 md:px-8 mx-auto">
+            <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <h2 className="text-3xl font-bold font-headline">
                   {user ? `Welcome back, ${user.email?.split('@')[0]}` : 'Your Health Dashboard'}
                 </h2>
                 <p className="text-muted-foreground">Manage your consultations and localized health info.</p>
               </div>
-              <Badge variant="outline" className="text-secondary font-medium border-secondary/20 bg-secondary/5">
+              <Badge variant="outline" className="text-secondary font-medium border-secondary/20 bg-secondary/5 w-fit">
                 Coimbatore Regional Center
               </Badge>
             </div>
@@ -236,14 +241,14 @@ export default function Home() {
 
         {/* Upcoming Consultations */}
         <section className="py-16">
-          <div className="container px-4 md:px-8">
+          <div className="container px-4 md:px-8 mx-auto">
             <h3 className="text-2xl font-bold font-headline mb-8 flex items-center gap-2">
               <Clock className="h-5 w-5 text-primary" /> Upcoming Appointments
             </h3>
             <div className="grid gap-4">
               <div className="flex items-center justify-between p-4 bg-white rounded-xl border shadow-sm">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-slate-200 overflow-hidden relative">
+                  <div className="h-12 w-12 rounded-full bg-slate-200 overflow-hidden relative shrink-0">
                     <Image 
                       src="https://picsum.photos/seed/doctor1/48/48" 
                       alt="Doctor" 
@@ -268,7 +273,7 @@ export default function Home() {
 
               <div className="flex items-center justify-between p-4 bg-white rounded-xl border shadow-sm">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-slate-200 overflow-hidden relative">
+                  <div className="h-12 w-12 rounded-full bg-slate-200 overflow-hidden relative shrink-0">
                     <Image 
                       src="https://picsum.photos/seed/doctor2/48/48" 
                       alt="Doctor" 
@@ -295,13 +300,13 @@ export default function Home() {
         </section>
       </main>
       <footer className="border-t bg-slate-50 py-12">
-        <div className="container px-4 md:px-8">
+        <div className="container px-4 md:px-8 mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center space-x-2">
               <Stethoscope className="h-6 w-6 text-primary" />
               <span className="font-headline font-bold text-slate-900">HealthConnect Coimbatore</span>
             </div>
-            <p className="text-sm text-muted-foreground">© 2024 HealthConnect AI. All medical recommendations are preliminary.</p>
+            <p className="text-sm text-muted-foreground text-center md:text-left">© 2024 HealthConnect AI. All medical recommendations are preliminary.</p>
             <div className="flex space-x-6">
               <Link href="#" className="text-sm text-muted-foreground hover:text-primary">Privacy Policy</Link>
               <Link href="#" className="text-sm text-muted-foreground hover:text-primary">Terms of Service</Link>
