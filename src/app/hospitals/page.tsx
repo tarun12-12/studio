@@ -1,3 +1,6 @@
+
+"use client";
+
 import { Navbar } from '@/components/layout/Navbar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,33 +12,43 @@ import Image from 'next/image';
 const hospitals = [
   {
     id: 1,
-    name: "Central General Hospital",
-    address: "123 Health Ave, Metropolis",
-    phone: "+1 555-0123",
-    website: "centralhospital.com",
+    name: "KMCH (Kovai Medical Center and Hospital)",
+    address: "Avinashi Road, Coimbatore, Tamil Nadu 641014",
+    phone: "+91 422 432 3800",
+    website: "kmchhospitals.com",
     status: "Open 24/7",
-    distance: "1.2 miles away",
-    specialties: ["Emergency", "Surgery", "Pediatrics"]
+    distance: "Peelamedu",
+    specialties: ["Cardiology", "Oncology", "Multi-Speciality"]
   },
   {
     id: 2,
-    name: "St. Jude Children's Medical Center",
-    address: "456 Hope St, Metropolis",
-    phone: "+1 555-0456",
-    website: "stjudemed.org",
+    name: "PSG Hospitals",
+    address: "Avinashi Rd, Peelamedu, Coimbatore, Tamil Nadu 641004",
+    phone: "+91 422 257 0170",
+    website: "psghospitals.com",
     status: "Open 24/7",
-    distance: "3.5 miles away",
-    specialties: ["Pediatrics", "Oncology"]
+    distance: "Peelamedu",
+    specialties: ["Education", "Emergency", "Neurology"]
   },
   {
     id: 3,
-    name: "Metropolis Heart Institute",
-    address: "789 Pulse Way, Metropolis",
-    phone: "+1 555-0789",
-    website: "metroheart.com",
-    status: "8 AM - 10 PM",
-    distance: "4.1 miles away",
-    specialties: ["Cardiology", "Diagnostics"]
+    name: "KG Hospital",
+    address: "Arts College Rd, Coimbatore, Tamil Nadu 641018",
+    phone: "+91 422 221 2121",
+    website: "kghospital.com",
+    status: "Open 24/7",
+    distance: "Gopalapuram",
+    specialties: ["Heart", "Diabetes", "Eye Care"]
+  },
+  {
+    id: 4,
+    name: "Sri Ramakrishna Hospital",
+    address: "Saroini Naidu Rd, Sidhapudur, Coimbatore, Tamil Nadu 641044",
+    phone: "+91 422 450 0000",
+    website: "sriramakrishnahospital.com",
+    status: "Open 24/7",
+    distance: "Sidhapudur",
+    specialties: ["Organ Transplant", "Maternity", "Critical Care"]
   }
 ];
 
@@ -47,13 +60,13 @@ export default function HospitalsPage() {
         <div className="container max-w-6xl mx-auto space-y-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold font-headline">Hospital Locator</h1>
-              <p className="text-muted-foreground">Find medical facilities and urgent care near you.</p>
+              <h1 className="text-3xl font-bold font-headline">Hospitals in Coimbatore</h1>
+              <p className="text-muted-foreground">Find top-rated medical facilities and multi-speciality centers in Coimbatore.</p>
             </div>
             <div className="flex gap-2 w-full md:max-w-md">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                <Input placeholder="Enter city or zip code..." className="pl-10 h-12 bg-white border-none shadow-sm" />
+                <Input placeholder="Search areas (Peelamedu, RS Puram...)" className="pl-10 h-12 bg-white border-none shadow-sm" />
               </div>
               <Button className="h-12 px-6 bg-primary hover:bg-primary/90">Search</Button>
             </div>
@@ -97,11 +110,10 @@ export default function HospitalsPage() {
             </div>
 
             <div className="lg:col-span-2 rounded-3xl overflow-hidden relative min-h-[500px] bg-slate-200 shadow-inner">
-              {/* Simulated Map */}
               <div className="absolute inset-0 bg-slate-200 flex items-center justify-center">
                 <div className="text-center space-y-4">
                   <MapPin className="h-12 w-12 text-primary animate-bounce mx-auto" />
-                  <p className="text-slate-500 font-medium">Map view loading...</p>
+                  <p className="text-slate-500 font-medium">Map of Coimbatore loading...</p>
                 </div>
               </div>
               <div className="absolute top-4 right-4 flex flex-col gap-2">

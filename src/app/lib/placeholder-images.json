@@ -1,3 +1,4 @@
+
 {
   "placeholderImages": [
     {
@@ -13,16 +14,22 @@
       "imageHint": "doctor patient"
     },
     {
-      "id": "hospital-building",
-      "description": "Exterior of a modern medical facility",
-      "imageUrl": "https://picsum.photos/seed/hosp1/800/400",
-      "imageHint": "hospital exterior"
+      "id": "hospital-kmch",
+      "description": "Kovai Medical Center and Hospital Coimbatore",
+      "imageUrl": "https://picsum.photos/seed/kmch/800/400",
+      "imageHint": "medical center"
     },
     {
-      "id": "ai-medical-tech",
-      "description": "Futuristic medical technology interface",
-      "imageUrl": "https://picsum.photos/seed/ai-med/600/600",
-      "imageHint": "medical technology"
+      "id": "hospital-psg",
+      "description": "PSG Hospitals Coimbatore",
+      "imageUrl": "https://picsum.photos/seed/psg/800/400",
+      "imageHint": "modern hospital"
+    },
+    {
+      "id": "hospital-kg",
+      "description": "KG Hospital Coimbatore",
+      "imageUrl": "https://picsum.photos/seed/kgh/800/400",
+      "imageHint": "hospital building"
     }
   ]
 }

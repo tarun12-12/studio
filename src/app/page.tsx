@@ -1,14 +1,38 @@
+
+"use client";
+
 import { Navbar } from '@/components/layout/Navbar';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Activity, Search, MapPin, MessageSquare, ArrowRight, Star, Clock, Stethoscope } from 'lucide-react';
+import { Activity, Search, MapPin, MessageSquare, ArrowRight, Star, Clock, Stethoscope, Building2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useUser } from '@/firebase';
 
 export default function Home() {
+  const { user } = useUser();
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-medical');
+  const kmchImage = PlaceHolderImages.find(img => img.id === 'hospital-kmch');
+  const psgImage = PlaceHolderImages.find(img => img.id === 'hospital-psg');
+
+  const coimbatoreHospitals = [
+    {
+      id: 'kmch',
+      name: 'KMCH Hospital',
+      location: 'Avinashi Road',
+      rating: 4.8,
+      image: kmchImage?.imageUrl
+    },
+    {
+      id: 'psg',
+      name: 'PSG Hospitals',
+      location: 'Peelamedu',
+      rating: 4.7,
+      image: psgImage?.imageUrl
+    }
+  ];
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -27,7 +51,7 @@ export default function Home() {
                     Connect with Health, <span className="text-primary underline decoration-secondary/30">Instantly.</span>
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                    AI-driven symptom analysis, remote consultations, and local hospital matching. Experience modern healthcare designed around you.
+                    Personalized healthcare for Coimbatore. AI-driven symptom analysis, remote consultations, and localized hospital matching.
                   </p>
                 </div>
                 <div className="flex flex-col gap-3 min-[400px]:flex-row">
@@ -37,7 +61,7 @@ export default function Home() {
                     </Link>
                   </Button>
                   <Button asChild variant="outline" size="lg" className="rounded-full h-12 px-8 border-primary text-primary hover:bg-primary/10">
-                    <Link href="/doctors">Find a Doctor</Link>
+                    <Link href="/hospitals">Find Coimbatore Hospitals</Link>
                   </Button>
                 </div>
               </div>
@@ -58,16 +82,72 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Dashboard Quick Actions */}
-        <section className="py-12 bg-white/50 border-y">
+        {/* Localized Coimbatore Hospitals Section */}
+        <section className="py-16 bg-slate-50">
+          <div className="container px-4 md:px-8">
+            <div className="flex items-center justify-between mb-8">
+              <div className="space-y-1">
+                <h2 className="text-3xl font-bold font-headline">Hospitals in Coimbatore</h2>
+                <p className="text-muted-foreground">Access world-class medical facilities right in your city.</p>
+              </div>
+              <Button asChild variant="ghost" className="text-primary hidden sm:flex">
+                <Link href="/hospitals">View All <ArrowRight className="ml-2 h-4 w-4" /></Link>
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {coimbatoreHospitals.map((hospital) => (
+                <Card key={hospital.id} className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all group">
+                  <div className="relative h-48 bg-slate-200">
+                    {hospital.image && (
+                      <Image 
+                        src={hospital.image} 
+                        alt={hospital.name} 
+                        fill 
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        data-ai-hint="hospital building"
+                      />
+                    )}
+                  </div>
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-bold text-xl">{hospital.name}</h3>
+                      <div className="flex items-center gap-1 text-sm font-bold text-amber-500">
+                        <Star className="h-4 w-4 fill-amber-500" /> {hospital.rating}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
+                      <MapPin className="h-4 w-4" /> {hospital.location}, Coimbatore
+                    </div>
+                    <Button asChild className="w-full bg-slate-100 text-slate-900 hover:bg-primary hover:text-white border-none shadow-none">
+                      <Link href="/hospitals">Locate Hospital</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+              <Card className="flex flex-col items-center justify-center p-8 border-dashed border-2 bg-transparent hover:bg-slate-100/50 transition-colors">
+                <Building2 className="h-12 w-12 text-slate-300 mb-4" />
+                <h3 className="font-bold text-lg mb-2">More Facilities</h3>
+                <p className="text-sm text-muted-foreground text-center mb-6">Explore the full list of medical centers in Coimbatore.</p>
+                <Button asChild variant="outline" className="rounded-full border-primary text-primary">
+                  <Link href="/hospitals">Explore All</Link>
+                </Button>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Quick Actions Dashboard */}
+        <section className="py-12 bg-white border-y">
           <div className="container px-4 md:px-8">
             <div className="mb-10 flex items-center justify-between">
               <div>
-                <h2 className="text-3xl font-bold font-headline">Welcome back, John</h2>
-                <p className="text-muted-foreground">Your health summary for today</p>
+                <h2 className="text-3xl font-bold font-headline">
+                  {user ? `Welcome back, ${user.email?.split('@')[0]}` : 'Your Health Dashboard'}
+                </h2>
+                <p className="text-muted-foreground">Manage your consultations and localized health info.</p>
               </div>
               <Badge variant="outline" className="text-secondary font-medium border-secondary/20 bg-secondary/5">
-                Last login: 2 hours ago
+                Coimbatore Regional Center
               </Badge>
             </div>
             
@@ -97,7 +177,7 @@ export default function Home() {
                   <CardTitle className="text-lg">My Messages</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground">
-                  2 unread messages from Dr. Sarah Miller.
+                  Connect with specialists from KMCH or PSG Hospitals.
                 </CardContent>
                 <CardFooter>
                   <Button asChild variant="ghost" size="sm" className="p-0 text-secondary font-semibold hover:bg-transparent">
@@ -114,7 +194,7 @@ export default function Home() {
                   <CardTitle className="text-lg">Hospitals</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground">
-                  Find the nearest medical centers in your area.
+                  Find the nearest medical centers in Coimbatore.
                 </CardContent>
                 <CardFooter>
                   <Button asChild variant="ghost" size="sm" className="p-0 text-slate-600 font-semibold hover:bg-transparent">
@@ -131,7 +211,7 @@ export default function Home() {
                   <CardTitle className="text-lg">Doctor Finder</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground">
-                  Search for specialists and book remote sessions.
+                  Search for Coimbatore's top specialists.
                 </CardContent>
                 <CardFooter>
                   <Button asChild variant="ghost" size="sm" className="p-0 text-slate-600 font-semibold hover:bg-transparent">
@@ -152,12 +232,12 @@ export default function Home() {
             <div className="grid gap-4">
               <div className="flex items-center justify-between p-4 bg-white rounded-xl border shadow-sm">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-slate-200 overflow-hidden">
+                  <div className="h-12 w-12 rounded-full bg-slate-200 overflow-hidden relative">
                     <Image 
                       src="https://picsum.photos/seed/doctor1/48/48" 
                       alt="Doctor" 
-                      width={48} 
-                      height={48}
+                      fill
+                      className="object-cover"
                       data-ai-hint="doctor portrait"
                     />
                   </div>
@@ -177,24 +257,24 @@ export default function Home() {
 
               <div className="flex items-center justify-between p-4 bg-white rounded-xl border shadow-sm">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-slate-200 overflow-hidden">
+                  <div className="h-12 w-12 rounded-full bg-slate-200 overflow-hidden relative">
                     <Image 
                       src="https://picsum.photos/seed/doctor2/48/48" 
                       alt="Doctor" 
-                      width={48} 
-                      height={48}
+                      fill
+                      className="object-cover"
                       data-ai-hint="doctor portrait"
                     />
                   </div>
                   <div>
                     <h4 className="font-semibold text-slate-900">Dr. Michael Chen</h4>
-                    <p className="text-sm text-muted-foreground">General Practitioner • Clinic Visit</p>
+                    <p className="text-sm text-muted-foreground">General Practitioner • Clinic Visit (KMCH)</p>
                   </div>
                 </div>
                 <div className="text-right flex items-center gap-6">
                   <div className="hidden sm:block">
-                    <p className="font-medium text-slate-900">Oct 24, 10:00 AM</p>
-                    <p className="text-xs text-muted-foreground">Tomorrow</p>
+                    <p className="font-medium text-slate-900">Tomorrow, 10:00 AM</p>
+                    <p className="text-xs text-muted-foreground">Peelamedu Branch</p>
                   </div>
                   <Button size="sm" variant="outline">View Details</Button>
                 </div>
@@ -208,7 +288,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center space-x-2">
               <Stethoscope className="h-6 w-6 text-primary" />
-              <span className="font-headline font-bold text-slate-900">HealthConnect AI</span>
+              <span className="font-headline font-bold text-slate-900">HealthConnect Coimbatore</span>
             </div>
             <p className="text-sm text-muted-foreground">© 2024 HealthConnect AI. All medical recommendations are preliminary.</p>
             <div className="flex space-x-6">
