@@ -1,0 +1,28 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-medical",
+      "description": "Modern hospital interior with medical staff",
+      "imageUrl": "https://picsum.photos/seed/health1/1200/600",
+      "imageHint": "hospital interior"
+    },
+    {
+      "id": "doctor-consulting",
+      "description": "Doctor consulting with a patient",
+      "imageUrl": "https://picsum.photos/seed/doc1/600/400",
+      "imageHint": "doctor patient"
+    },
+    {
+      "id": "hospital-building",
+      "description": "Exterior of a modern medical facility",
+      "imageUrl": "https://picsum.photos/seed/hosp1/800/400",
+      "imageHint": "hospital exterior"
+    },
+    {
+      "id": "ai-medical-tech",
+      "description": "Futuristic medical technology interface",
+      "imageUrl": "https://picsum.photos/seed/ai-med/600/600",
+      "imageHint": "medical technology"
+    }
+  ]
+}
